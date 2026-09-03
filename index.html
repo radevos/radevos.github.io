@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diviértete pensando</title>
+<meta name="description" content="Sudoku, nonograma y buscaminas para iPhone. Todo se resuelve razonando: aquí nunca se gana ni se pierde por suerte.">
+<link rel="icon" href="img/sereno.jpg">
+<meta property="og:title" content="Diviértete pensando">
+<meta property="og:description" content="Sudoku, nonograma y buscaminas para iPhone. Todo se resuelve razonando: aquí nunca se gana ni se pierde por suerte.">
+<meta property="og:image" content="https://radevos.github.io/img/filon-arte.jpg">
+<meta property="og:type" content="website">
+<link rel="preload" href="fonts/bricolage.ttf" as="font" type="font/ttf" crossorigin>
+
+<style>
+/* Tipografía de marca, ya usada en Sereno Sudoku. Ambas con licencia OFL,
+   servidas desde este mismo dominio (ver fonts/OFL-*.txt). */
+@font-face{
+  font-family:'Bricolage';
+  src:url('fonts/bricolage.ttf') format('truetype-variations');
+  font-weight:400 800; font-display:swap;
+}
+@font-face{
+  font-family:'Instrument';
+  src:url('fonts/instrument.ttf') format('truetype-variations');
+  font-weight:400 700; font-display:swap;
+}
+
+/* Un solo sistema de formas: tarjetas y medios a 20px, controles en píldora.
+   Un solo acento: hueso sobre tinta. El color lo aportan los propios juegos. */
+:root{
+  color-scheme:light dark;
+  --ink:#16130f;
+  --ink-2:#4a443c;
+  --ink-3:#6f675c;
+  --paper:#f2f0ea;
+  --surface:#ffffff;
+  --line:#dedad1;
+  --btn-bg:#16130f;
+  --btn-ink:#f7f5f0;
+  --radius:20px;
+  --shadow:0 1px 2px rgba(22,19,15,.05), 0 12px 32px -12px rgba(22,19,15,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ink:#f2efe8;
+    --ink-2:#b4ada1;
+    --ink-3:#8b8377;
+    --paper:#14120f;
+    --surface:#1e1b17;
+    --line:#302b25;
+    --btn-bg:#f2efe8;
+    --btn-ink:#14120f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -12px rgba(0,0,0,.6);
+  }
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Instrument',system-ui,-apple-system,'Segoe UI',sans-serif;
+  font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+h1,h2,.num{font-family:'Bricolage','Instrument',system-ui,sans-serif; font-weight:700; letter-spacing:-.02em}
+p{max-width:60ch}
+img{display:block; max-width:100%; height:auto}
+a{color:inherit}
+
+/* Hero: alineado a la izquierda, sin centrar, sin adornos. */
+.hero{padding:88px 0 56px}
+.hero h1{font-size:clamp(2.4rem,6.2vw,4.1rem); line-height:1.02; margin:0 0 20px; font-weight:800}
+.hero p{font-size:clamp(1.05rem,2.2vw,1.3rem); color:var(--ink-2); margin:0}
+
+/* Sereno: dos capturas reales sobre una columna de texto. */
+.game{padding:40px 0 64px; border-top:1px solid var(--line)}
+.game h2{font-size:clamp(1.9rem,4vw,2.7rem); margin:0 0 4px; line-height:1.1}
+.kind{color:var(--ink-3); font-size:1rem; margin:0 0 20px}
+.body{color:var(--ink-2); margin:0 0 28px}
+
+.split{display:grid; grid-template-columns:1fr; gap:36px; align-items:center}
+@media (min-width:860px){
+  .split{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:56px}
+  .split.flip>.text{order:2}
+  .split.flip>.media{order:1}
+}
+
+.shots{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+.shots img{border-radius:var(--radius); box-shadow:var(--shadow)}
+
+.art{border-radius:var(--radius); box-shadow:var(--shadow)}
+
+.head{display:flex; align-items:center; gap:16px; margin-bottom:14px}
+.icon{width:64px; height:64px; border-radius:15px; box-shadow:var(--shadow); flex:none}
+
+.badge{
+  display:inline-block; font-size:.82rem; letter-spacing:.02em;
+  color:var(--ink-2); border:1px solid var(--line);
+  padding:5px 13px; border-radius:999px; margin:0 0 20px;
+}
+
+.btn{
+  display:inline-block; background:var(--btn-bg); color:var(--btn-ink);
+  text-decoration:none; font-weight:600; font-size:1.02rem;
+  padding:15px 28px; border-radius:999px; white-space:nowrap;
+  transition:transform .15s ease, opacity .15s ease;
+}
+.btn:hover{opacity:.9}
+.btn:active{transform:translateY(1px)}
+.soon{color:var(--ink-3); font-size:1.02rem; margin:0}
+
+/* La tagline oficial de Filon, como cita corta y no como adorno. */
+.tagline{font-family:'Bricolage','Instrument',sans-serif; font-weight:600;
+  font-size:1.15rem; color:var(--ink); margin:0 0 26px}
+
+footer{border-top:1px solid var(--line); padding:32px 0 56px; color:var(--ink-3); font-size:.95rem}
+footer ul{list-style:none; display:flex; flex-wrap:wrap; gap:8px 26px; padding:0; margin:0 0 14px}
+footer a{text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:2px}
+footer a:hover{border-bottom-color:var(--ink-3)}
+
+:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:4px}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Diviértete<br>pensando</h1>
+    <p>Sudoku, nonograma y buscaminas para iPhone. Todo se resuelve razonando: aquí nunca
+    se gana ni se pierde por suerte.</p>
+  </section>
+
+  <section class="game">
+    <div class="split">
+      <div class="text">
+        <div class="head">
+          <img class="icon" src="img/sereno.jpg" width="64" height="64" alt="Icono de Sereno Sudoku">
+          <div>
+            <h2>Sereno Sudoku</h2>
+            <p class="kind">Sudoku y nonograma</p>
+          </div>
+        </div>
+        <p class="body">Cada tablero tiene una solución única y sale por pura deducción. Las pistas te
+        enseñan la jugada en vez de resolverla por ti, así que se aprende jugando. Con reto
+        diario, tres temas y seis idiomas.</p>
+        <a class="btn" href="https://apps.apple.com/es/app/sereno-sudoku/id6803223415">Ver en el App Store</a>
+      </div>
+      <div class="media shots">
+        <img src="img/sereno-sudoku.jpg" width="560" height="1214" loading="lazy"
+             alt="Partida de sudoku en curso, con notas y resaltados">
+        <img src="img/sereno-nonograma.jpg" width="560" height="1214" loading="lazy"
+             alt="Partida de nonograma con las pistas de cada fila y columna">
+      </div>
+    </div>
+  </section>
+
+  <section class="game">
+    <div class="split flip">
+      <div class="text">
+        <div class="head">
+          <img class="icon" src="img/filon.jpg" width="64" height="64" alt="Icono de Filon">
+          <div>
+            <h2>Filon</h2>
+            <p class="kind">Buscaminas</p>
+          </div>
+        </div>
+        <p class="badge">En preparación</p>
+        <p class="tagline">Excava. Deduce. Descubre.</p>
+        <p class="body">Un buscaminas en el que nunca pierdes por mala suerte: los tableros se generan
+        para que siempre haya una jugada deducible. Bajas por la galería excavando, con la
+        linterna por delante y la veta por descubrir.</p>
+        <p class="soon">Pronto en el App Store.</p>
+      </div>
+      <div class="media">
+        <img class="art" src="img/filon-arte.jpg" width="900" height="900" loading="lazy"
+             alt="Filon, el minero protagonista, con su pico entre lámparas y vetas de oro">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <ul>
+    <li><a href="https://radevos.github.io/sereno-sudoku-legal/">Privacidad de Sereno Sudoku</a></li>
+    <li><a href="https://radevos.github.io/filon-legal/">Privacidad de Filon</a></li>
+  </ul>
+  <p style="margin:0">radevos</p>
+</footer>
+
+</body>
+</html>
